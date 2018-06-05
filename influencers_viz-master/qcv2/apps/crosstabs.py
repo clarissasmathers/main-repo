@@ -14,7 +14,7 @@ import utils
 schema_dropdown = dcc.Dropdown(
 	id = 'crosstab_schema_dropdown',
 	options = [
-		{'label': 'Development', 'value': 'influencers_dev'},
+		{'label': 'Development', '3value': 'influencers_dev'},
 		{'label': 'Production', 'value': 'influencers'}
 	],
 	value='influencers',
@@ -59,16 +59,16 @@ basetable_dropdown_influencers_dev = utils.table_dropdown(
 	)
 
 var_selection_dropdown = dcc.Dropdown(
-	id = 'group_selection_dropdown',
+	id = 'var_selection_dropdown',
 	value = ["COUNT(*) AS count", "AVG(influence) AS avg_influence_score"],
-	options = [{'label': x, 'value': y} for x,y in config.xtab_group_options.items()],
+	options = [{'label': x, 'value': y} for x,y in config.xtab_var_options.items()],
 	multi = True,
 	)
 
 group_selection_dropdown = dcc.Dropdown(
-	id = 'var_selection_dropdown',
-	value = [],
-	options = [{'label': x, 'value': x} for x in config.xtab_var_options],
+	id = 'group_selection_dropdown',
+	value = ['state'],
+	options = [{'label': x, 'value': x} for x in config.xtab_group_options],
 	multi = True,
 	)
 
@@ -140,6 +140,61 @@ def set_display_children(selected_filter, selected_focus):
     (third, a, b, c, d, fourth) = text.split(maxsplit=6)
 
 
+# THIRD FOCUSED FILTER DROPDOWN
+
+@app.callback(
+    Output('third_focused_filter_dropdown', 'options'),
+    [Input('filter_dropdown', 'value')])
+def set_filter_options_two(selected_filter):
+    return [{'label': i, 'value': i} for i in config.filter_options[selected_filter[2]]]
+
+third_focused_filter_dropdown = dcc.Dropdown(
+	id = 'third_focused_filter_dropdown')
+
+# SAVING THE CATEGORICAL AND THIRD FOCUSED FILTER CHOICES
+
+@app.callback(
+    Output('third-display-selected-values', 'children'),
+    [Input('filter_dropdown', 'value'),
+    Input('third_focused_filter_dropdown', 'value')])
+def set_display_children(selected_filter, selected_focus):
+    text =  u'{} is a something in {}'.format(
+        selected_focus, selected_filter,
+    )
+    global fifth, sixth
+    (fifth, a, b, c, d, sixth) = text.split(maxsplit=6)
+
+# FOURTH FOCUSED FILTER DROPDOWN
+
+@app.callback(
+    Output('fourth_focused_filter_dropdown', 'options'),
+    [Input('filter_dropdown', 'value')])
+def set_filter_options_two(selected_filter):
+    return [{'label': i, 'value': i} for i in config.filter_options[selected_filter[3]]]
+
+fourth_focused_filter_dropdown = dcc.Dropdown(
+	id = 'fourth_focused_filter_dropdown')
+
+# SAVING THE CATEGORICAL AND FOURTH FOCUSED FILTER CHOICES
+
+@app.callback(
+    Output('fourth-display-selected-values', 'children'),
+    [Input('filter_dropdown', 'value'),
+    Input('fourth_focused_filter_dropdown', 'value')])
+def set_display_children(selected_filter, selected_focus):
+    text =  u'{} is a something in {}'.format(
+        selected_focus, selected_filter,
+    )
+    global seventh, eighth
+    (seventh, a, b, c, d, eighth) = text.split(maxsplit=6)
+
+
+
+
+
+
+
+
 # GENERATE XTABS:
 
 def write_one_var(table, universe, where_clause='TRUE', var_name=None, output='COUNT(*)', verbose=False):
@@ -157,13 +212,40 @@ def write_one_var(table, universe, where_clause='TRUE', var_name=None, output='C
     returns:
     sql string
     '''
-    if var_name is None:
-        sql = 'SELECT \'Topline\' AS Variable\n, \'Topline\' AS Level\n, {output} \nFROM {table} \nWHERE {where_clause} \nGROUP BY 1,2'.format(output=output, table=table, where_clause=where_clause, universe=universe)
-    else:
-        sql = 'SELECT \'{var_name}\' AS Variable\n, {var_name}::VARCHAR AS Level\n, {output} \nFROM {table} \nWHERE {where_clause} \nGROUP BY 1,2'.format(var_name=var_name, output=output, table=table, where_clause=where_clause, universe=universe)
+    list_of_vars = []
+    list_of_vars.append(var_name)
+    list_of_vars = list_of_vars[0][1:]
+    select_clause = """\'Topline\' AS Variable\n"""
+    group_by_clause = """1"""
+
+    if len(list_of_vars) == 1:
+    	select_clause = """{list_of_vars[0]} AS {list_of_vars[0]}\n""".format(list_of_vars=list_of_vars)
+    elif len(list_of_vars) == 2:
+    	select_clause = """{list_of_vars[0]} AS {list_of_vars[0]}\n, {list_of_vars[1]} AS {list_of_vars[1]}\n""".format(list_of_vars=list_of_vars)
+    	group_by_clause = """1,2"""
+    elif len(list_of_vars) == 3:
+    	select_clause = """{list_of_vars[0]} AS {list_of_vars[0]}\n, {list_of_vars[1]} AS {list_of_vars[1]}\n, {list_of_vars[2]} AS {list_of_vars[2]}\n""".format(list_of_vars=list_of_vars)
+    	group_by_clause = """1,2,3"""
+    elif len(list_of_vars) == 4:
+    	select_clause = """{list_of_vars[0]} AS {list_of_vars[0]}\n, {list_of_vars[1]} AS {list_of_vars[1]}\n, {list_of_vars[2]} AS {list_of_vars[2]}\n, {list_of_vars[3]} AS {list_of_vars[3]}\n""".format(list_of_vars=list_of_vars)
+    	group_by_clause = """1,2,3,4"""
+    elif len(list_of_vars) == 5:
+    	select_clause = """{list_of_vars[0]} AS {list_of_vars[0]}\n, {list_of_vars[1]} AS {list_of_vars[1]}\n, {list_of_vars[2]} AS {list_of_vars[2]}\n, {list_of_vars[3]} AS {list_of_vars[3]}\n, {list_of_vars[4]} AS {list_of_vars[4]}\n""".format(list_of_vars=list_of_vars)
+    	group_by_clause = """1,2,3,4,5"""
+
+    sql = 'SELECT {select_clause}, {output} \nFROM {table} \nWHERE {where_clause} \nGROUP BY {group_by_clause}'.format(var_name=var_name, output=output, table=table, where_clause=where_clause, universe=universe, select_clause=select_clause, group_by_clause=group_by_clause)
+    
     if verbose:
         print(sql)
     return sql
+
+    # if var_name is None:
+    # 	sql = 'SELECT \'Topline\' AS Variable\n, \'Topline\' AS Level\n, {output} \nFROM {table} \nWHERE {where_clause} \nGROUP BY 1,2'.format(output=output, table=table, where_clause=where_clause, universe=universe)
+    # else:
+    # 	sql = 'SELECT \'{var_name}\' AS Variable\n, {var_name}::VARCHAR AS Level\n, {output} \nFROM {table} \nWHERE {where_clause} \nGROUP BY 1,2'.format(var_name=var_name, output=output, table=table, where_clause=where_clause, universe=universe)
+    # if verbose:
+    #     print(sql)
+    # return sql
 
 def write_all_vars(table, universe_list, where_clause_list, var_list, output='COUNT(*)', persistent=False, local=False, table_name='xtabs', verbose=False):
     '''Create a complete document of xtabs for a data set
@@ -186,8 +268,8 @@ def write_all_vars(table, universe_list, where_clause_list, var_list, output='CO
     '''
     sql_list = []
     for unv, where in zip(universe_list, where_clause_list):
-        for var in var_list:
-            sql_list.append(write_one_var(table, unv, var_name=var, output=output, where_clause=where))
+        #for var in var_list:
+        sql_list.append(write_one_var(table, unv, var_name=var_list, output=output, where_clause=where))
     sql = '\n\nUNION ALL\n\n'.join(sql_list)
     sql = sql + '\nORDER BY 1,2,3;'
     if persistent:
@@ -197,6 +279,11 @@ def write_all_vars(table, universe_list, where_clause_list, var_list, output='CO
     if verbose:
         print(sql)
     return sql
+
+
+
+
+
 
 
 layout = html.Div([
@@ -233,9 +320,17 @@ layout = html.Div([
 			html.Div(id ='first-display-selected-values'),
 			html.Div(id ='second-display-selected-values'),
 			html.Div(id = 'display_num_cats')
-		],
-		className = 'crosstabOptions'
-		),
+			], className = 'crosstabOptions'),
+		html.Div([
+			html.Label("Third Filter Selection:"),
+			third_focused_filter_dropdown,
+			html.Label("Fourth Filter Selection:"),
+			fourth_focused_filter_dropdown,
+			], className = 'crosstabRow'),
+		html.Div([
+			html.Div(id ='third-display-selected-values'),
+			html.Div(id ='fourth-display-selected-values')
+			], className = 'crosstabOptions'),
 	html.Br(),
 	html.Button(
 		id = 'crosstab_run',
@@ -252,10 +347,15 @@ layout = html.Div([
         'flex-direction': 'column',
         'justify-content': 'center',
         'align-items': 'center',
-        'resize': 'both',
-        # 'overflow': 'auto',
+        'resize': 'both'
+        #'overflow': 'auto',
     }
 )])
+
+media_market_def = config.media_market_def
+
+
+
 
 
 # SWITCH BETWEEN DROPDOWNS BASED ON SCHEMA:
@@ -307,17 +407,25 @@ def update_crosstab_basetable_influencers_dropdown(value):
 	State('crosstab_union_influencers_dev_dropdown', 'value'),
 	State('crosstab_basetable_influencers_dropdown', 'value'),
 	State('crosstab_basetable_influencers_dev_dropdown', 'value'),
-	State('group_selection_dropdown', 'value'),
 	State('var_selection_dropdown', 'value'),
+	State('group_selection_dropdown', 'value'),
 	State('filter_dropdown', 'value'),
 	State('first_focused_filter_dropdown', 'value'),
-	State('second_focused_filter_dropdown', 'value')
+	State('second_focused_filter_dropdown', 'value'),
+	State('third_focused_filter_dropdown', 'value'),
+	State('fourth_focused_filter_dropdown', 'value')
 	#State('')
 	]
 	)
 
 
-def run_crosstabs(n_clicks, schema, union1, union2, basetable1, basetable2, groups, vars, filters, focused_filter, second_focused_filter):
+
+
+
+
+
+
+def run_crosstabs(n_clicks, schema, union1, union2, basetable1, basetable2, groups, vars, filters, focused_filter, second_focused_filter, third_focused_filter, fourth_focused_filter):
 
 	if n_clicks is None:
 		return None
@@ -333,13 +441,82 @@ def run_crosstabs(n_clicks, schema, union1, union2, basetable1, basetable2, grou
 
 	where_clause_list = [True]
 	output = groups
-	output = ', '.join(output) 
+	output = ', '.join(output)
+
+	temp_table = """DROP TABLE IF EXISTS temp_table;
+
+	CREATE TABLE temp_table AS
+		SELECT i.influence, voterbase_id,
+	        CAST(PERCENT_RANK() OVER (PARTITION BY 'state' ORDER BY influence ASC) AS decimal(10,2)) as state_influence_rank,
+	        CAST(PERCENT_RANK() OVER (ORDER BY influence ASC) AS decimal(10,2)) as national_influence_rank
+		FROM influencers.sum_of_scores_internal_statepolicy_generic_20180523 i
+		LEFT JOIN influencers.union_20180523 mf USING (voterbase_id)
+		WHERE influence > 0)"""
+	
+	where_clause = ' TRUE '
 	if cat_num == 0:
-		table = "(SELECT a.*, b.* FROM {schema}.{union} a JOIN {schema}.{basetable} b USING (voterbase_id) WHERE influence > 0)".format(schema=schema, union=union, basetable=basetable)
+		where_clause = """b.influence > 0"""
 	elif cat_num == 1:
-		table = "(SELECT a.*, b.* FROM {schema}.{union} a JOIN {schema}.{basetable} b USING (voterbase_id) WHERE (influence > 0 AND {first[0]} = '{second}'))".format(schema=schema, union=union, basetable=basetable, first=filters, second=focused_filter)
+		where_clause = """b.influence > 0 
+		AND ((('{filt[0]}' = 'influence' OR '{filt[0]}' = 'national_influence_rank') AND {filt[0]} >= '{first}') 
+		OR (('{filt[0]}' != 'influence' OR '{filt[0]}' != 'national_influence_rank') AND {filt[0]} = '{first}'))""".format(filt=filters, first=focused_filter)
+	elif cat_num == 2:
+		where_clause = """b.influence > 0 
+		AND ((('{filt[0]}' = 'influence' OR '{filt[0]}' = 'national_influence_rank') AND {filt[0]} >= '{first}') 
+		OR (('{filt[0]}' != 'influence' OR '{filt[0]}' != 'national_influence_rank') AND {filt[0]} = '{first}'))
+
+		AND ((('{filt[1]}' = 'influence' OR '{filt[1]}' = 'national_influence_rank') AND {filt[1]} >= '{second}') 
+		OR (('{filt[1]}' != 'influence' OR '{filt[1]}' != 'national_influence_rank') AND {filt[1]} = '{second}'))""".format(filt=filters, first=focused_filter, second=second_focused_filter)
+	elif cat_num == 3:
+		where_clause = """b.influence > 0 
+		AND ((('{filt[0]}' = 'influence' OR '{filt[0]}' = 'national_influence_rank') AND {filt[0]} >= '{first}') 
+		OR (('{filt[0]}' != 'influence' OR '{filt[0]}' != 'national_influence_rank') AND {filt[0]} = '{first}'))
+
+		AND ((('{filt[1]}' = 'influence' OR '{filt[1]}' = 'national_influence_rank') AND {filt[1]} >= '{second}') 
+		OR (('{filt[1]}' != 'influence' OR '{filt[1]}' != 'national_influence_rank') AND {filt[1]} = '{second}'))
+
+		AND ((('{filt[2]}' = 'influence' OR '{filt[2]}' = 'national_influence_rank') AND {filt[2]} >= '{third}') 
+		OR (('{filt[2]}' != 'influence' OR '{filt[2]}' != 'national_influence_rank') AND {filt[2]} = '{third}'))""".format(filt=filters, first=focused_filter, second=second_focused_filter, third=third_focused_filter)
 	else:
-		table = "(SELECT a.*, b.* FROM {schema}.{union} a JOIN {schema}.{basetable} b USING (voterbase_id) WHERE (influence > 0 AND {first[0]} = '{second}' AND {first[1]} = '{fourth}'))".format(schema=schema, union=union, basetable=basetable, first=filters, second=focused_filter, fourth=second_focused_filter)
+		where_clause = """b.influence > 0 
+		AND ((('{filt[0]}' = 'influence' OR '{filt[0]}' = 'national_influence_rank') AND {filt[0]} >= '{first}') 
+		OR (('{filt[0]}' != 'influence' OR '{filt[0]}' != 'national_influence_rank') AND {filt[0]} = '{first}'))
+
+		AND ((('{filt[1]}' = 'influence' OR '{filt[1]}' = 'national_influence_rank') AND {filt[1]} >= '{second}') 
+		OR (('{filt[1]}' != 'influence' OR '{filt[1]}' != 'national_influence_rank') AND {filt[1]} = '{second}'))
+
+		AND ((('{filt[2]}' = 'influence' OR '{filt[2]}' = 'national_influence_rank') AND {filt[2]} >= '{third}') 
+		OR (('{filt[2]}' != 'influence' OR '{filt[2]}' != 'national_influence_rank') AND {filt[2]} = '{third}'))
+
+		AND ((('{filt[3]}' = 'influence' OR '{filt[3]}' = 'national_influence_rank') AND {filt[3]} >= '{fourth}') 
+		OR (('{filt[3]}' != 'influence' OR '{filt[3]}' != 'national_influence_rank') AND {filt[3]} = '{fourth}'))""".format(filt=filters, first=focused_filter, second=second_focused_filter, third=third_focused_filter, fourth=fourth_focused_filter)
+	
+	table = """(SELECT a.*, b.*, 
+	CASE WHEN (
+    health_insurance = 1 OR
+    health_policy = 1 OR
+    health_provider = 1 OR
+    pharma = 1
+    ) THEN 1 ELSE 0 END as healthcare, 
+	CASE WHEN (
+    federal_level = 1 OR
+    local_level = 1 OR
+    government = 1
+    ) THEN 1 ELSE 0 END as all_government, 
+	CASE WHEN (
+    forbes_400_list = 1 OR
+    fortune_500_board_list = 1 OR
+    finance = 1 OR
+    business = 1
+    ) THEN 1 ELSE 0 END as all_business, 
+	CEILING(national_influence_rank*10.)::INT AS national_influence_decile,
+	CEILING(state_influence_rank*10.)::INT AS state_influence_decile, m.msa
+	
+	FROM temp_table b JOIN influencers.union_20180523 a USING (voterbase_id)
+	LEFT JOIN (SELECT msa, {media_market_def} FROM influencers_dev.msa_mediamarket) as m on a.demo_media_market = m.media_market
+	WHERE {where_clause})""".format(schema=schema, union=union, basetable=basetable, filt=filters, first=focused_filter, second=second_focused_filter, third=third_focused_filter, fourth=fourth_focused_filter, media_market_def=media_market_def, where_clause=where_clause)
+
+
 	xtab_sql = write_all_vars(table, basetable, where_clause_list, [None] + vars, output=output)
 	# try:
 	xtabs = exec_query(xtab_sql, verbose=True)
@@ -348,10 +525,6 @@ def run_crosstabs(n_clicks, schema, union1, union2, basetable1, basetable2, grou
 		# return "There was an error fetching xtabs, make sure that the column is available in the universe you're using."
 
 	return utils.get_table_from_df(xtabs)
+
+
 		
-
-
-
-
-
-

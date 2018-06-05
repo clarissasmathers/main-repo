@@ -1,41 +1,44 @@
-
 ### Configuration
 
 ### XTABS CONFIG:
 
-xtab_group_options = {
+xtab_var_options = {
     "Count" : "COUNT(*) AS count",
     "Percentage": "COUNT(*)::FLOAT / SUM(COUNT(*)) OVER() AS pct",
     "Avg Contribution": "AVG(CASE WHEN contribution_amnt > 0 THEN contribution_amnt ELSE NULL END) AS avg_contribution",
-    "Avg Salary": "AVG(CASE WHEN salary > 0 THEN salary ELSE NULL END) AS avg_salary",
+    #"Avg Salary": "AVG(CASE WHEN salary > 0 THEN salary ELSE NULL END) AS avg_salary",
     "Avg Influence": "AVG(influence) AS avg_influence_score",
-    "Avg Influence Rank": "AVG(influence_rank) AS avg_influence_rank",
-    "Avg State Influence Rank": "AVG(state_influence) AS avg_state_influence_rank",
+    "Avg National Influence Rank": "AVG(national_influence_rank) AS avg_natl_influence_rank",
+    "Avg State Influence Rank": "AVG(state_influence_rank) AS avg_state_influence_rank",
     "Avg Mail Contactability": "AVG(mail_contact) AS avg_mail_contactability",
     "Avg Digital Contactability": "AVG(digital_contact) AS avg_digital_contactability",
     "Avg Mobile Contactability": "AVG(mobile_contact) AS avg_mobile_contactability",
     "Avg TV Contactability": "AVG(tv_any) AS avg_tv_contactability",
     "Avg Partisan Score": "AVG(c_bl_partisan_score) AS avg_partisan_score",
-    "Pct Government": "AVG(government*100) AS pct_govt",
-    "Pct Business": "AVG(business*100) AS pct_business",
-    "Pct Female": "AVG(CASE WHEN CASE WHEN gender = 'Unknown' THEN NULL ELSE gender END = 'Female' THEN 100 ELSE 0 END) AS pct_female",
-    "PCT 18 to 29": "AVG(CASE WHEN demo_age_bucket_full = 'a18to29' THEN 100 ELSE 0 END) AS pct18to29",
-    "PCT 30 to 39": "AVG(CASE WHEN demo_age_bucket_full = 'b30to39' THEN 100 ELSE 0 END) AS pct30to39",
-    "PCT 40 to 49": "AVG(CASE WHEN demo_age_bucket_full = 'c40to49' THEN 100 ELSE 0 END) AS pct40to49",
-    "PCT 50 to 64": "AVG(CASE WHEN demo_age_bucket_full = 'd50to64' THEN 100 ELSE 0 END) AS pct50to64",
-    "PCT 65 plus": "AVG(CASE WHEN demo_age_bucket_full = 'e65plus' THEN 100 ELSE 0 END) AS pct65plus",
+    "Pct Government": "CAST(CONVERT(DECIMAL(10,2), AVG(all_government*100)) as nvarchar) AS pct_govt",
+    "Pct Business": "CAST(CONVERT(DECIMAL(10,2), AVG(all_business*100)) as nvarchar) AS pct_business",
+    "Pct Healthcare": "CAST(CONVERT(DECIMAL(10,2), AVG(healthcare*100)) as nvarchar) AS pct_healthcare",
+    "Pct Female": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN CASE WHEN gender = 'Unknown' THEN NULL ELSE gender END = 'Female' THEN 100 ELSE 0 END)) as nvarchar) AS pct_female",
+    "PCT 18 to 29": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN demo_age_bucket_full = 'a18to29' THEN 100 ELSE 0 END)) AS nvarchar) AS pct18to29",
+    "PCT 30 to 39": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN demo_age_bucket_full = 'b30to39' THEN 100 ELSE 0 END)) AS nvarchar) AS pct30to39",
+    "PCT 40 to 49": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN demo_age_bucket_full = 'c40to49' THEN 100 ELSE 0 END)) AS nvarchar) AS pct40to49",
+    "PCT 50 to 64": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN demo_age_bucket_full = 'd50to64' THEN 100 ELSE 0 END)) AS nvarchar) AS pct50to64",
+    "PCT 65 plus": "CAST(CONVERT(DECIMAL(10,2), AVG(CASE WHEN demo_age_bucket_full = 'e65plus' THEN 100 ELSE 0 END)) AS nvarchar) AS pct65plus",
+    "PCT Federal Level": "CAST(CONVERT(DECIMAL(10,2), AVG(federal_level*100)) AS nvarchar) AS pct_federal",
+    "PCT State Level": "CAST(CONVERT(DECIMAL(10,2), AVG(state_level*100)) AS nvarchar) AS pct_state",
+    "PCT Local Level": "CAST(CONVERT(DECIMAL(10,2), AVG(local_level*100)) AS nvarchar) AS pct_local"
 }
 
-xtab_var_options = ['state', 'media_market', 'gender', 'spouse', 'demo_age_bucket_full',
+xtab_group_options = ['state', 'influence', 'media_market', 'gender', 'spouse', 'demo_age_bucket_full',
      'density_bucket_full', 'marital_status_bucket',
      'marital_status_x_gender', 'religion_bucket', 'demo_combined_ethnicity_4way',
      'education_modeling', 'donrever_1', 'children', 'retired', 'veteran_1', 'renter',
      'homeowner', 'investor_1', 'demo_income_bucket_full', 'vb_business_owner_indicator',
-     'vb_length_of_residence_in_years', 'national_influence_decile', 'influence_decile'
-     'ballotpedia_list','who_leads_list','fec_candidates_list', 'fec_committees_list'
+     'length_of_residence', 'national_influence_decile', 'state_influence_decile',
+     'ballotpedia_list','who_leads_officials_list','fec_candidates_list', 'fec_committees_list',
      'fec_contributions_list', 'fec_expenditures_list', 'fec_transactions_list',
      'federal_house_lobbyists_list', 'federal_senate_lobbyists_list', 'forbes_400_list',
-     'fortune_500_list', 'health_experts_list', 'health_providers_list', 'hospital_administrators_list',
+     'fortune_500_board_list', 'health_experts_list', 'health_providers_list', 'hospital_administrators_list',
      'house_staffers_list', 'journalists_list', 'non_dod_opm_staffers_list', 'regulation_commenters_list',
      'senate_staffers_list', 'thirty_under_thirty_list', 'whitehouse_staffers_list',
      'wikipedia_list', 'ar_staffers_list', 'ca_staffers_list', 'ct_staffers_list',
@@ -58,11 +61,12 @@ xtab_var_options = ['state', 'media_market', 'gender', 'spouse', 'demo_age_bucke
      'government', 'democrat', 'republican', 'lobbying', 'politics', 'technology',
      'manufacturing', 'media', 'finance', 'energy', 'education', 'legal', 'environment',
      'community_social', 'national_security', 'sports', 'business', 'entertainment',
-     'executive', 'legislative',
+     'executive', 'legislative', 'all_business', 'all_government', 'healthcare', 'city', 'demo_county_name', 
+     'msa', 'national_influence_rank', 'state_influence_rank'
 ]
 
 filter_options = {
-    'state': ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 
+    'state': ['AK', 'AL' 'AZ', 'AR', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 
     'IN', 'IA', 'KS', 'KY', 'LA', 'MA', 'ME', 'MD', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE',
     'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 
     'VA', 'VT', 'WA', 'WI', 'WV', 'WY'],
@@ -71,7 +75,9 @@ filter_options = {
     'demo_income_bucket_full': ['Income 00-30k', 'Income 030-50k', 'Income 050-75k', 'Income 075k-125', 'Income 125k+', 'unknown'],
     'demo_combined_ethnicity_4way': ['A', 'H', 'W', 'B'],
     'democrat': [0,1],
-    'republican': [0,1]
+    'republican': [0,1],
+    "influence": [0, 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600],
+    'national_influence_rank': [0, 0.01, 0.02, 0.03, 0.04, 0.07, 0.08, 0.1, 0.11, 0.14, 0.15, 0.17, 0.19, 0.25, 0.26, 0.28, 0.31, 0.32, 0.35, 0.36, 0.37, 0.52, 0.53, 0.54, 0.58, 0.59, 0.6, 0.61, 0.69, 0.7, 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1]
 }
 
 column_formats = {
@@ -117,3 +123,215 @@ column_formats = {
     "pct50to64": lambda cont: "{:02.1f}%".format(cont * 1),
     "pct65plus": lambda cont: "{:02.1f}%".format(cont * 1),
 }
+
+media_market_def = '''CASE
+WHEN media_market ilike 'Ancorage, AK' THEN 'anchorage ak'
+WHEN media_market ilike 'Mobile, AL-Pensacola, FL' THEN 'mobile al-pensacola (ft. walton beach) fl'
+WHEN media_market ilike 'Montgomery, AL' THEN 'montgomery (selma) al'
+WHEN media_market ilike 'Jonesboro, AR' THEN 'jonesboro ar'
+WHEN media_market ilike 'Yuma, AZ' THEN 'yuma az-el centro ca'
+WHEN media_market ilike 'Palm Springs, CA' THEN 'palm springs ca'
+WHEN media_market ilike 'Bakersfield, CA' THEN 'bakersfield ca'
+WHEN media_market ilike 'Washington, DC' THEN 'washington dc (hagerstown md)'
+WHEN media_market ilike 'Boston, MA' THEN 'boston ma (manchester nh)'
+WHEN media_market ilike 'Colorado Springs, CO' THEN 'colorado springs-pueblo co'
+WHEN media_market ilike 'Tampa-St. Petersburg, FL' THEN 'tampa-st.petersburg (sarasota) fl'
+WHEN media_market ilike 'Gainesville, FL' THEN 'gainesville fl'
+WHEN media_market ilike 'Greenville-Spartanburg SC-Asheville, NC' THEN 'greenville-spartanburg sc-asheville nc-anderson sc'
+WHEN media_market ilike 'Springfield-Decatur, IL' THEN 'champaign & springfield-decatur il'
+WHEN media_market ilike 'Austin, TX' THEN 'austin tx'
+WHEN media_market ilike 'Indianapolis, IN' THEN 'indianapolis in'
+WHEN media_market ilike 'Springfield-Holyoke, MA' THEN 'springfield-holyoke ma'
+WHEN media_market ilike 'Detroit, MI' THEN 'detroit mi'
+WHEN media_market ilike 'Traverse City-Cadillac, MI' THEN 'traverse city-cadillac mi'
+WHEN media_market ilike 'Lansing, MI' THEN 'lansing mi'
+WHEN media_market ilike 'Duluth MN' THEN 'duluth mn-superior wi'
+WHEN media_market ilike 'Green Bay-Appleton, WI' THEN 'green bay-appleton wi'
+WHEN media_market ilike 'La Crosse-Eau Claire, WI' THEN 'la crosse-eau claire wi'
+WHEN media_market ilike 'Butte-Bozeman, MT' THEN 'butte-bozeman mt'
+WHEN media_market ilike 'Minot-Bismarck-Dickinson, ND' THEN 'minot-bismarck-dickinson nd'
+WHEN media_market ilike 'Watertown, NY' THEN 'watertown ny'
+WHEN media_market ilike 'Wichita Falls TX & Lawton, OK' THEN 'wichita falls tx & lawton ok'
+WHEN media_market ilike 'Yakima-Pasco-Richland-Kennewick, WA' THEN 'yakima-pasco-richland-kennewick wa'
+WHEN media_market ilike 'Harlingen-Weslaco-Brownsville-McAllen, TX' THEN 'harlingen-weslaco-brownsville-mcallen tx'
+WHEN media_market ilike 'Harrisonburg, VA' THEN 'harrisonburg va'
+WHEN media_market ilike 'Bluefield-Beckley-Oak Hill, WV' THEN 'bluefield-beckley-oak hill wv'
+WHEN media_market ilike 'Juneau, AK' THEN 'juneau ak'
+WHEN media_market ilike 'Huntsville-Decatur, AL' THEN 'huntsville-decatur (florence) al'
+WHEN media_market ilike 'Shreveport, LA' THEN 'shreveport la'
+WHEN media_market ilike 'Chico-Redding, CA' THEN 'chico-redding ca'
+WHEN media_market ilike 'Chicago, IL' THEN 'chicago il'
+WHEN media_market ilike 'Charlotte, NC' THEN 'charlotte nc'
+WHEN media_market ilike 'Topeka, KS' THEN 'topeka ks'
+WHEN media_market ilike 'Columbia-Jefferson city, MO' THEN 'columbia-jefferson city mo'
+WHEN media_market ilike 'Greensboro-Winston Salem, NC' THEN 'greensboro-high point-winston salem nc'
+WHEN media_market ilike 'Norfolk-Portsmouth-Newport News, VA' THEN 'norfolk-portsmouth-newport news va'
+WHEN media_market ilike 'Harrisburg-Lancaster-Lebanon-York, PA' THEN 'harrisburg-lancaster-lebanon-york pa'
+WHEN media_market ilike 'Erie, PA' THEN 'erie pa'
+WHEN media_market ilike 'Oklahoma City, OK' THEN 'oklahoma city ok'
+WHEN media_market ilike 'Eugene, OR' THEN 'eugene or'
+WHEN media_market ilike 'Jackson, TN' THEN 'jackson tn'
+WHEN media_market ilike 'Laredo, TX' THEN 'laredo tx'
+WHEN media_market ilike 'Madison, WI' THEN 'madison wi'
+WHEN media_market ilike 'Springfield, MO' THEN 'springfield mo'
+WHEN media_market ilike 'Tucson, AZ' THEN 'tucson (sierra vista) az'
+WHEN media_market ilike 'San Francisco-Oakland, CA' THEN 'san francisco-oakland-san jose ca'
+WHEN media_market ilike 'Monterey-Salinas, CA' THEN 'monterey-salinas ca'
+WHEN media_market ilike 'Denver, CO' THEN 'denver co'
+WHEN media_market ilike 'West Palm Beach, FL' THEN 'west palm beach-fort pierce fl'
+WHEN media_market ilike 'Tallahassee, FL' THEN 'tallahassee fl-thomasville ga'
+WHEN media_market ilike 'Baton Rouge, LA' THEN 'baton rouge la'
+WHEN media_market ilike 'Macon, GA' THEN 'macon ga'
+WHEN media_market ilike 'Omaha, NE' THEN 'omaha ne'
+WHEN media_market ilike 'St. Louis, MO' THEN 'st. louis mo'
+WHEN media_market ilike 'Evansville, IN' THEN 'evansville in'
+WHEN media_market ilike 'Lafayette, IN' THEN 'lafayette in'
+WHEN media_market ilike 'Cincinnati, OH' THEN 'cincinnati oh'
+WHEN media_market ilike 'Grand Rapids-Kalamazoo, MI' THEN 'grand rapids-kalamazoo-battle creek mi'
+WHEN media_market ilike 'Minneapolis-St. paul, MN' THEN 'minneapolis-st. paul mn'
+WHEN media_market ilike 'Bangor, ME' THEN 'bangor me'
+WHEN media_market ilike 'Hattiesburg-Laurel, MS' THEN 'hattiesburg-laurel ms'
+WHEN media_market ilike 'Jackson, MS' THEN 'jackson ms'
+WHEN media_market ilike 'Billings, MT' THEN 'billings mt'
+WHEN media_market ilike 'Great Falls, MT' THEN 'great falls mt'
+WHEN media_market ilike 'Raleigh-Durham, NC' THEN 'raleigh-durham (fayetteville) nc'
+WHEN media_market ilike 'Dayton, OH' THEN 'dayton oh'
+WHEN media_market ilike 'Roanoke-Lynchburg, VA' THEN 'roanoke-lynchburg va'
+WHEN media_market ilike 'Fairbanks, AK' THEN 'fairbanks ak'
+WHEN media_market ilike 'Atlanta, GA' THEN 'atlanta ga'
+WHEN media_market ilike 'Dallas-Ft. worth, TX' THEN 'dallas-ft.worth tx'
+WHEN media_market ilike 'Medford-Klamath falls, OR' THEN 'medford-klamath falls or'
+WHEN media_market ilike 'New York, NY' THEN 'new york ny'
+WHEN media_market ilike 'Las Vegas, NV' THEN 'las vegas nv'
+WHEN media_market ilike 'Spokane, WA' THEN 'spokane wa'
+WHEN media_market ilike 'Louisville, KY' THEN 'louisville ky'
+WHEN media_market ilike 'Portland-Auburn, ME' THEN 'portland-auburn me'
+WHEN media_market ilike 'Marquette, MI' THEN 'marquette mi'
+WHEN media_market ilike 'Helena, MT' THEN 'helena mt'
+WHEN media_market ilike 'Rochester, NY' THEN 'rochester ny'
+WHEN media_market ilike 'Buffalo, NY' THEN 'buffalo ny'
+WHEN media_market ilike 'Tyler-Longview, TX' THEN 'tyler-longview (lufkin & nacogdoches) tx'
+WHEN media_market ilike 'Clarksburg-Weston, WV' THEN 'clarksburg-weston wv'
+WHEN media_market ilike 'Little Rock, AR' THEN 'little rock-pine bluff ar'
+WHEN media_market ilike 'Phoenix, AZ' THEN 'phoenix (prescott) az'
+WHEN media_market ilike 'Hartford-New Haven, CT' THEN 'hartford & new haven ct'
+WHEN media_market ilike 'Philadelphia, PA' THEN 'philadelphia pa'
+WHEN media_market ilike 'Orlando-Daytona Beach, FL' THEN 'orlando-daytona beach-melbourne fl'
+WHEN media_market ilike 'Jacksonville, FL' THEN 'jacksonville fl'
+WHEN media_market ilike 'Davenport I' THEN 'davenport ia-rock island-moline il'
+WHEN media_market ilike 'Rochester MN' THEN 'rochester mn-mason cityia-austin mn'
+WHEN media_market ilike 'Ft. Wayne, IN' THEN 'ft. wayne in'
+WHEN media_market ilike 'Joplin MO-Pittsburg, KS' THEN 'joplin mo-pittsburg ks'
+WHEN media_market ilike 'Baltimore, MD' THEN 'baltimore md'
+WHEN media_market ilike 'Toledo, OH' THEN 'toledo oh'
+WHEN media_market ilike 'Fargo-Valley city, ND' THEN 'fargo-valley city nd'
+WHEN media_market ilike 'Mankato, MN' THEN 'mankato mn'
+WHEN media_market ilike 'Greenwood-Greenville, MS' THEN 'greenwood-greenville ms'
+WHEN media_market ilike 'Glendive, MT' THEN 'glendive mt'
+WHEN media_market ilike 'Greenville-New Bern, NC' THEN 'greenville-new bern-washington nc'
+WHEN media_market ilike 'Charleston, SC' THEN 'charleston sc'
+WHEN media_market ilike 'Odessa-Midland, TX' THEN 'odessa-midland tx'
+WHEN media_market ilike 'Richmond-Petersburg, VA' THEN 'richmond-petersburg va'
+WHEN media_market ilike 'Lima, OH' THEN 'lima oh'
+WHEN media_market ilike 'Sherman, TX' THEN 'sherman tx-ada ok'
+WHEN media_market ilike 'Portland, OR' THEN 'portland or'
+WHEN media_market ilike 'Wilkes Barre-Scranton, PA' THEN 'wilkes barre-scranton pa'
+WHEN media_market ilike 'Beaumont-Port Arthur, TX' THEN 'beaumont-port arthur tx'
+WHEN media_market ilike 'Seattle-Tacoma, WA' THEN 'seattle-tacoma wa'
+WHEN media_market ilike 'Birmingham, AL' THEN 'birmingham (anniston & tuscaloosa) al'
+WHEN media_market ilike 'Panama City, FL' THEN 'panama city fl'
+WHEN media_market ilike 'New Orleans, LA' THEN 'new orleans la'
+WHEN media_market ilike 'Twin Falls, ID' THEN 'twin falls id'
+WHEN media_market ilike 'Salt Lake city, UT' THEN 'salt lake city ut'
+WHEN media_market ilike 'Albany-Schenectady, NY' THEN 'albany-schenectady-troy ny'
+WHEN media_market ilike 'Myrtle Beach, SC' THEN 'myrtle beach-florence sc'
+WHEN media_market ilike 'North Platte, NE' THEN 'north platte ne'
+WHEN media_market ilike 'Binghamton, NY' THEN 'binghamton ny'
+WHEN media_market ilike 'Cleveland-Akron, OH' THEN 'cleveland-akron (canton) oh'
+WHEN media_market ilike 'Youngstown, OH' THEN 'youngstown oh'
+WHEN media_market ilike 'Johnstown-Altoona, PA' THEN 'johnstown-altoona pa'
+WHEN media_market ilike 'Columbia, SC' THEN 'columbia sc'
+WHEN media_market ilike 'Corpus Christi, TX' THEN 'corpus christi tx'
+WHEN media_market ilike 'Abilene-Sweetwater, TX' THEN 'abilene-sweetwater tx'
+WHEN media_market ilike 'Columbus, GA' THEN 'columbus ga'
+WHEN media_market ilike 'Monroe, LA-El Dorado, AR' THEN 'monroe la-el dorado ar'
+WHEN media_market ilike 'Los Angeles, CA' THEN 'los angeles ca'
+WHEN media_market ilike 'Santa Barbara, CA' THEN 'santa barbara-santa maria-san luis obispo ca'
+WHEN media_market ilike 'Savannah, GA' THEN 'savannah ga'
+WHEN media_market ilike 'Chattanooga, TN' THEN 'chattanooga tn'
+WHEN media_market ilike 'Cedar Rapids-Iowa City-Dubuque, IA' THEN 'cedar rapids-waterloo-iowa city & dubuque ia'
+WHEN media_market ilike 'Ottumwaia-Kirksville, MO' THEN 'ottumwaia-kirksville mo'
+WHEN media_market ilike 'Wausau-Rhinelander, WI' THEN 'wausau-rhinelander wi'
+WHEN media_market ilike 'St. Joseph, MO' THEN 'st. joseph mo'
+WHEN media_market ilike 'Bowling Green, KY' THEN 'bowling green ky'
+WHEN media_market ilike 'Milwaukee, WI' THEN 'milwaukee wi'
+WHEN media_market ilike 'Alexandria, LA' THEN 'alexandria la'
+WHEN media_market ilike 'Missoula, MT' THEN 'missoula mt'
+WHEN media_market ilike 'Wilmington, NC' THEN 'wilmington nc'
+WHEN media_market ilike 'El Paso, TX' THEN 'el paso tx (las cruces nm)'
+WHEN media_market ilike 'Utica, NY' THEN 'utica ny'
+WHEN media_market ilike 'Waco-Temple, TX' THEN 'waco-temple-bryan tx'
+WHEN media_market ilike 'Casper-Riverton, WY' THEN 'casper-riverton wy'
+WHEN media_market ilike 'Dothan, AL' THEN 'dothan al'
+WHEN media_market ilike 'Grand Junction-Montrose, CO' THEN 'grand junction-montrose co'
+WHEN media_market ilike 'Ft. Myers-Naples, FL' THEN 'ft. myers-naples fl'
+WHEN media_market ilike 'Albany, GA' THEN 'albany ga'
+WHEN media_market ilike 'Honolulu, HI' THEN 'honolulu hi'
+WHEN media_market ilike 'Idaho Falls-Pocatello, ID' THEN 'idaho falls-pocatello id'
+WHEN media_market ilike 'Boise, ID' THEN 'boise id'
+WHEN media_market ilike 'Knoxville, TN' THEN 'knoxville tn'
+WHEN media_market ilike 'South Bend-Elkhart, IN' THEN 'south bend-elkhart in'
+WHEN media_market ilike 'Tulsa, OK' THEN 'tulsa ok'
+WHEN media_market ilike 'Lake Charles, LA' THEN 'lake charles la'
+WHEN media_market ilike 'Lafayette, LA' THEN 'lafayette la'
+WHEN media_market ilike 'Providenceri-New Bedford, MA' THEN 'providenceri-new bedford ma'
+WHEN media_market ilike 'Syracuse, NY' THEN 'syracuse ny'
+WHEN media_market ilike 'Presque Isle, ME' THEN 'presque isle me'
+WHEN media_market ilike 'Burlington VT-plattsburgh, NY' THEN 'burlington vt-plattsburgh ny'
+WHEN media_market ilike 'Elmira, NY' THEN 'elmira (corning) ny'
+WHEN media_market ilike 'Columbus, OH' THEN 'columbus oh'
+WHEN media_market ilike 'Zanesville, OH' THEN 'zanesville oh'
+WHEN media_market ilike 'Wheeling WV-Steubenville, OH' THEN 'wheeling wv-steubenville oh'
+WHEN media_market ilike 'Lubbock, TX' THEN 'lubbock tx'
+WHEN media_market ilike 'Columbus-Tupelo, MS' THEN 'columbus-tupelo-west point ms'
+WHEN media_market ilike 'Sacramento-Stockton-Modesto, CA' THEN 'sacramento-stockton-modesto ca'
+WHEN media_market ilike 'Eureka, CA' THEN 'eureka ca'
+WHEN media_market ilike 'San Diego, CA' THEN 'san diego ca'
+WHEN media_market ilike 'Reno, NV' THEN 'reno nv'
+WHEN media_market ilike 'Salisbury, MD' THEN 'salisbury md'
+WHEN media_market ilike 'Wichita-Hutchinson, KS' THEN 'wichita-hutchinson ks'
+WHEN media_market ilike 'Augusta, GA' THEN 'augusta ga'
+WHEN media_market ilike 'Houston, TX' THEN 'houston tx'
+WHEN media_market ilike 'Sioux City, IA' THEN 'sioux city ia'
+WHEN media_market ilike 'Terre Haute, IN' THEN 'terre haute in'
+WHEN media_market ilike 'Peoria-Bloomington, IL' THEN 'peoria-bloomington il'
+WHEN media_market ilike 'Lincoln, NE' THEN 'lincoln & hastings-kearney ne'
+WHEN media_market ilike 'Lexington, KY' THEN 'lexington ky'
+WHEN media_market ilike 'Rapid City, SD' THEN 'rapid city sd'
+WHEN media_market ilike 'Cheyenne, WY' THEN 'cheyenne wy-scottsbluff ne'
+WHEN media_market ilike 'Amarillo, TX' THEN 'amarillo tx'
+WHEN media_market ilike 'Victoria, TX' THEN 'victoria tx'
+WHEN media_market ilike 'Charlottesville, VA' THEN 'charlottesville va'
+WHEN media_market ilike 'Meridian, MS' THEN 'meridian ms'
+WHEN media_market ilike 'Ft. Smith-Fayetteville, AR' THEN 'ft. smith-fayetteville-springdale-rogers ar'
+WHEN media_market ilike 'Memphis, TN' THEN 'memphis tn'
+WHEN media_market ilike 'Albuquerque-Santa Fe, NM' THEN 'albuquerque-santa fe nm'
+WHEN media_market ilike 'Fresno-Visalia, CA' THEN 'fresno-visalia ca'
+WHEN media_market ilike 'Bend, OR' THEN 'bend or'
+WHEN media_market ilike 'Nashville, TN' THEN 'nashville tn'
+WHEN media_market ilike 'Miami-Ft. Lauderdale, FL' THEN 'miami-ft. lauderdale fl'
+WHEN media_market ilike 'Des Moines-Ames, IA' THEN 'des moines-ames ia'
+WHEN media_market ilike 'Quincyil-Hannibal, MO' THEN 'quincyil-hannibal mo-keokuk ia'
+WHEN media_market ilike 'Sioux Falls, SD' THEN 'sioux falls (mitchell) sd'
+WHEN media_market ilike 'Paducah, KY-Cape Girardeau, MO' THEN 'paducah ky-cape girardeau mo-harrisburg il'
+WHEN media_market ilike 'Rockford, IL' THEN 'rockford il'
+WHEN media_market ilike 'Pittsburgh, PA' THEN 'pittsburgh pa'
+WHEN media_market ilike 'Kansas City, MO' THEN 'kansas city mo'
+WHEN media_market ilike 'Charleston-Huntington, WV' THEN 'charleston-huntington wv'
+WHEN media_market ilike 'Tri-Cities, TN-VA' THEN 'tri-cities tn-va'
+WHEN media_market ilike 'Flint-Saginaw, MI' THEN 'flint-saginaw-bay city mi'
+WHEN media_market ilike 'Alpena, MI' THEN 'alpena mi'
+WHEN media_market ilike 'Biloxi-Gulfport, MS' THEN 'biloxi-gulfport ms'
+WHEN media_market ilike 'Parkersburg, WV' THEN 'parkersburg wv'
+WHEN media_market ilike 'San Antonio, TX' THEN 'san antonio tx'
+WHEN media_market ilike 'San Angelo, TX' THEN 'san angelo tx' END as media_market'''
